@@ -1,0 +1,134 @@
+heapsort;
+
+"COMMENT" Reads integers from tape into an array and then sorts them in place using heapsort;
+"BEGIN"
+
+ "INTEGER" size;
+ "INTEGER" max;
+ "INTEGER" "ARRAY" A[0:100];
+
+ "PROCEDURE" heapdown(i);
+  "COMMENT" Move the element i down the heap until it doesn't violate the heap condition;
+  "VALUE" i;
+  "INTEGER" i;
+  "BEGIN"
+   "INTEGER" t, j;
+   j := i;
+   "FOR" i := j "WHILE" i*2+1 < size "DO" "BEGIN"
+    "COMMENT" Select the largest immediate child element;
+    "IF" i*2+2 < size "AND" A[i*2+2] > A[i*2+1] "THEN" j := i*2+2 "ELSE" j := i*2+1;
+    "COMMENT" If the parent is less than its largest child, swap them and repeat;
+    "IF" A[i] "LE" A[j] "THEN" "BEGIN"
+     t := A[j];
+     A[j] := A[i];
+     A[i] := t;
+    "END" nearif;
+   "END" for;
+  "END" heapdown;
+
+ "PROCEDURE" heapup(i);
+  "COMMENT" Move the element i up the heap until it doesn't violate the heap condition;
+  "VALUE" i;
+  "INTEGER" i;
+  "BEGIN"
+   "INTEGER" t;
+   "SWITCH" s := loop;
+  loop:
+   "IF" i > 0 "AND" A[i] > A[(i-1) "DIV" 2] "THEN" "BEGIN"
+    t := A[(i-1) "DIV" 2];
+    A[(i-1) "DIV" 2] := A[i];
+    A[i] := t;
+    i := (i-1) "DIV" 2;
+    "GOTO" loop;
+  "END";
+ "END" heapup;
+
+ "PROCEDURE" add(n);
+  "COMMENT" Add integer n to the heap. Caller must ensure the heap array is large enough for the entry;
+  "VALUE" n;
+  "INTEGER" n;
+  "BEGIN"
+   A[size] := n;
+   size := size + 1;
+   heapup(size-1);
+  "END" add;
+
+ "PROCEDURE" swapend;
+  "COMMENT" Swap the first array element with the last, decrease the size of the heap by one;
+  "COMMENT" and ensure the heap condition with a heapdown;
+  "BEGIN"
+   "INTEGER" t;
+   "IF" size > 1 "THEN" "BEGIN"
+    t := A[0];
+    A[0] := A[size - 1];
+    A[size - 1] := t;
+    size := size - 1;
+    heapdown(0);
+   "END" if;
+  "END" swapend;
+
+ "PROCEDURE" printarray(n);
+  "COMMENT" Print the integer contents of the array of length n;
+  "VALUE" n;
+  "INTEGER" n;
+  "BEGIN"
+   "INTEGER" i;
+   "PRINT" {{L2}};
+   "FOR" i := 0 "STEP" 1 "UNTIL" n-1 "DO" "PRINT" SAME LINE,A[i];
+   "PRINT" {{L2}};
+  "END" printarray;
+
+ "INTEGER" "PROCEDURE" readnumbers;
+  "COMMENT" Read integers from the paper tape. The first integer specifies how many to read;
+  "COMMENT" Retruns number of ingegers read;
+  "BEGIN"
+   "INTEGER" n, i;
+   "INTEGER" v;
+   "READ" n;
+   size := 0;
+   "FOR" i := 0 "STEP" 1 "UNTIL" n-1 "DO" "BEGIN"
+    "READ" A[i];
+   "END" for;
+   readnumbers := n;
+  "END" readnumbers;
+
+ "PROCEDURE" heapsort(n);
+  "COMMENT" Given an array of size n, adds items (in place) to a heap and then removes items;
+  "COMMENT" from the heap to leave an array in place of sorted items;
+  "VALUE" n;
+  "INTEGER" n;
+  "BEGIN"
+   "INTEGER" i;
+   "COMMENT" Build a heap;
+   "FOR" i := 0 "STEP" 1 "UNTIL" n-1 "DO"
+    add(A[i]);
+
+   "COMMENT" Remove from heap;
+   "FOR" n := n "STEP" -1 "UNTIL" 0 "DO"
+    swapend;
+
+  "END" heapsort;
+
+ "INTEGER" n;
+ "PRINT" {Reading integers from tape...};
+ n := readnumbers;
+ printarray(n);
+ 
+ "PRINT" {Sorting...};
+ heapsort(n);
+ printarray(n);
+
+"END";
+
+100
+
+37 27 16 45 82 74 24 8 98 89 
+70 39 0 55 11 6 40 9 17 37 
+33 75 78 22 14 67 14 93 99 30 
+33 51 22 82 12 47 67 80 30 47 
+50 59 84 22 94 93 91 31 17 43 
+64 90 38 63 61 41 46 94 15 17 
+22 42 19 12 73 54 38 56 24 18 
+78 64 87 8 38 16 29 39 20 40 
+99 53 27 59 11 68 45 4 47 8 
+11 35 80 59 52 9 41 14 68 5
